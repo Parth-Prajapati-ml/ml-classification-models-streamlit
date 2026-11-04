@@ -29,7 +29,7 @@ The goal of this project is to predict whether an online shopping session ends i
 ## c. Links
 
 - **GitHub Repository:** https://github.com/Parth-Prajapati-ml/ml-classification-models-streamlit
-- **Live Streamlit App:** [paste your .streamlit.app link here]
+- **Live Streamlit App:** https://online-shopper-purchase-prediction.streamlit.app/
 
 ## d. Models Used
 
@@ -45,11 +45,11 @@ All models were trained on the same training set and evaluated on the same 2,441
 
 | ML Model Name | Accuracy | AUC | Precision | Recall | F1 | MCC |
 |---|---|---|---|---|---|---|
-| Logistic Regression | 0.887 | [AUC] | 0.752 | 0.414 | 0.534 | 0.503 |
+| Logistic Regression | 0.887 | 0.900 | 0.752 | 0.414 | 0.534 | 0.503 |
 | Decision Tree | 0.900 | 0.916 | 0.709 | 0.607 | 0.654 | 0.599 |
-| KNN | 0.876 | [AUC] | 0.687 | 0.385 | 0.493 | 0.453 |
-| Naive Bayes | 0.277 | [AUC] | 0.176 | 0.979 | 0.298 | 0.138 |
-| Support Vector Machine | 0.896 | [AUC] | 0.736 | 0.518 | 0.608 | 0.561 |
+| KNN | 0.876 | 0.822 | 0.687 | 0.385 | 0.493 | 0.453 |
+| Naive Bayes | 0.277 | 0.750 | 0.176 | 0.979 | 0.298 | 0.138 |
+| Support Vector Machine | 0.896 | 0.873 | 0.736 | 0.518 | 0.608 | 0.561 |
 
 Precision, Recall, F1 and MCC refer to the positive class (purchase).
 
