@@ -1,10 +1,13 @@
 # Online Shopper Purchase Prediction
 
-## a. Problem Statement
+### a. Problem Statement
+Many people visit online shopping websites, browse different products, and leave without making a purchase. If we can predict whether a visitor is likely to buy something based on their browsing activity, businesses can take steps to encourage them to complete the purchase. For example, they can offer discounts, provide customer support through live chat, or show targeted advertisements.
 
-Most visitors to an online store browse and leave without buying anything. If a business can tell, from how a visitor behaves during a session, whether that session is likely to end in a purchase, it can act on it: show a discount, offer live chat, or retarget the visitor later.
+The main objective of this project is to predict whether a customer will make a purchase during an online shopping session. The prediction is based on details such as pages visited, time spent on the website, Google Analytics metrics, and visitor information.
 
-The goal of this project is to predict whether an online shopping session ends in a purchase (`Revenue` = 1) or not (`Revenue` = 0), using information about the pages visited, time spent, Google Analytics metrics, and visitor details. This is a **binary classification** problem. Five classification models are trained on the same data, compared on six evaluation metrics, and demonstrated through an interactive Streamlit web app.
+The target variable is Revenue, where 1 represents a purchase and 0 represents no purchase. This makes it a binary classification problem.
+
+In this project, five different machine learning classification models are trained and evaluated using six performance metrics. An interactive Streamlit application is also developed to demonstrate the predictions of these models.
 
 ## b. Dataset Description
 
@@ -55,14 +58,31 @@ Precision, Recall, F1 and MCC refer to the positive class (purchase).
 
 ### Observations
 
-| ML Model Name | Observation about model performance |
-|---|---|
-| Logistic Regression | High accuracy (0.887) and the best precision (0.752), so when it predicts a purchase it is usually right. But recall is only 0.414: it misses more than half of the real buyers. As a linear model it cannot easily capture threshold effects such as a sharp jump in purchase rate once `PageValues` is above zero, and the class imbalance pushes it towards predicting "no purchase". |
-| Decision Tree | Best overall balance: highest recall (0.607) among the reasonable models, highest F1 (0.654) and highest MCC (0.599), while keeping precision at 0.709. Trees split on thresholds, which suits features like `PageValues` and `ExitRates`, and they are not affected by skewed distributions. Limiting depth to 6 prevented overfitting. |
-| KNN | Weakest of the non-Naive-Bayes models (F1 0.493, MCC 0.453) and the lowest recall (0.385). With 85% of neighbours belonging to the "no purchase" class, a buyer's nearest neighbours are often non-buyers, so the majority vote favours the majority class. The many one-hot columns also make distances less meaningful. |
-| Naive Bayes | Predicts almost every session as a purchase: recall is 0.979 but precision is only 0.176 and accuracy drops to 0.277. Its assumptions do not hold here: the duration and page features are heavily skewed rather than normally distributed, the one-hot columns are binary, and features such as `BounceRates` and `ExitRates` are strongly correlated rather than independent. Its MCC (0.138) is close to random. |
-| Support Vector Machine | Second best overall (F1 0.608, MCC 0.561) with good precision (0.736) and moderate recall (0.518). The RBF kernel captures non-linear patterns better than Logistic Regression, but like the other models it is still biased towards the majority class. |
-| **Overall winner** | **Decision Tree.** Because only about 15% of sessions are purchases, accuracy is misleading: a model predicting "no purchase" every time would still score about 84%. Judged on MCC and F1, which account for both classes, the Decision Tree performs best, catching the most buyers while keeping false alarms low. |
+Logistic Regression - 
+
+Logistic Regression achieved good accuracy (0.887) and the highest precision (0.752). This means that when the model predicts a customer   will make a purchase, it is usually correct. However, its recall is only 0.414, meaning it misses many actual buyers. This could be because the model struggles to identify complex patterns in the data.
+
+Decision Tree- 
+
+Decision Tree performed better than the other models overall. It achieved the highest recall (0.607), F1-score (0.654) and MCC (0.599), with a good precision of 0.709. It can identify patterns based on conditions and values, which works well for features like PageValues and ExitRates. Limiting the tree depth to 6 also helped control overfitting.
+
+KNN- 
+
+KNN showed comparatively weaker performance, with an F1-score of 0.493 and MCC of 0.453. One possible reason is that most customers in the dataset did not make a purchase. Since KNN makes predictions based on nearby data points, it often classifies potential buyers as non-buyers. The large number of encoded categorical columns may also affect its performance.
+
+Naive Bayes- 
+
+Naive Bayes achieved very high recall (0.979), but its precision was very low (0.176). This means it identified almost all actual buyers but also incorrectly classified many non-buyers as buyers. Its overall accuracy was only 0.277. The model may not perform well because some features are highly skewed and several variables are related to each other, whereas Naive Bayes assumes that features are independent.
+
+Support Vector Machine (SVM)- 
+
+SVM delivered the second-best performance after Decision Tree, with an F1-score of 0.608 and MCC of 0.561. Its precision was 0.736, while recall was 0.518. The RBF kernel helped the model capture non-linear patterns in the data, although it still missed some actual buyers.
+
+Overall Winner – Decision Tree- 
+
+Based on the results, Decision Tree is the best-performing model for this dataset. Although Logistic Regression has slightly better accuracy, accuracy alone is not a reliable measure here because only around 15% of customers actually made a purchase. Decision Tree provides a better balance between identifying actual buyers and avoiding incorrect predictions. Therefore, considering F1-score, recall and MCC, Decision Tree is the most suitable model among the five.
+
+
 
 ## Repository Structure
 

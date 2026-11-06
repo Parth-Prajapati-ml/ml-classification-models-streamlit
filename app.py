@@ -1,147 +1,119 @@
+
 import os
-
 import joblib
-import matplotlib.pyplot as plt
-import pandas as pd
-import seaborn as sns
 import streamlit as st
-from sklearn.metrics import (accuracy_score, classification_report,
-                             confusion_matrix, f1_score, matthews_corrcoef,
-                             precision_score, recall_score, roc_auc_score)
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-# ---------------- Page setup ----------------
-st.set_page_config(page_title="Online Shopper Purchase Prediction", layout="wide")
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, matthews_corrcoef, roc_auc_score, confusion_matrix, classification_report
+
+st.set_page_config(page_title="Online Shopper Prediction", layout="wide")
 st.title("Online Shopper Purchase Prediction")
-st.write(
-    "Will a website visitor make a purchase? Upload the test data to see how "
-    "five pre-trained classifiers perform on it. The models are loaded from "
-    "saved files and are not retrained here."
-)
+st.write("Upload your test dataset and check the performance of different ML models.")
 
-MODEL_FILES = {
+models = {
     "Logistic Regression": "model/logistic_regression.pkl",
     "Decision Tree": "model/decision_tree.pkl",
     "KNN": "model/knn.pkl",
     "Naive Bayes": "model/naive_bayes.pkl",
-    "SVM": "model/svm.pkl",
+    "SVM": "model/svm.pkl"
 }
-TARGET = "Revenue"
-
 
 @st.cache_resource
 def load_model(path):
     return joblib.load(path)
 
-
-def to_binary(series):
-    """Convert the target to 0/1, whether it is stored as 0/1 or True/False."""
-    if series.dtype == object:
-        return series.astype(str).str.strip().str.lower().isin(["true", "1"]).astype(int)
-    return series.astype(int)
-
-
-def compute_metrics(model, X, y):
-    y_pred = model.predict(X)
-    y_prob = model.predict_proba(X)[:, 1]
-    scores = {
-        "Accuracy": accuracy_score(y, y_pred),
-        "AUC": roc_auc_score(y, y_prob),
-        "Precision": precision_score(y, y_pred, zero_division=0),
-        "Recall": recall_score(y, y_pred, zero_division=0),
-        "F1": f1_score(y, y_pred, zero_division=0),
-        "MCC": matthews_corrcoef(y, y_pred),
+def evaluate_model(model, X, y):
+    predictions = model.predict(X)
+    probabilities = model.predict_proba(X)[:, 1]
+    results = {
+        "Accuracy": accuracy_score(y, predictions),
+        "AUC": roc_auc_score(y, probabilities),
+        "Precision": precision_score(y, predictions, zero_division=0),
+        "Recall": recall_score(y, predictions, zero_division=0),
+        "F1": f1_score(y, predictions, zero_division=0),
+        "MCC": matthews_corrcoef(y, predictions)
     }
-    return scores, y_pred
+    return results, predictions
 
-
-# ---------------- Sidebar ----------------
 st.sidebar.header("Settings")
-model_name = st.sidebar.selectbox("Choose a model", list(MODEL_FILES.keys()))
-
+selected_model = st.sidebar.selectbox("Select ML Model", list(models.keys()))
 st.sidebar.markdown("---")
-st.sidebar.subheader("About the data")
-st.sidebar.write(
-    "UCI Online Shoppers Purchasing Intention dataset: one row per browsing "
-    "session, 17 features, and the target `Revenue` (1 = purchase). "
-    "Only about 15% of sessions end in a purchase, so look at Recall, F1 "
-    "and MCC, not just Accuracy."
-)
+st.sidebar.write("Dataset: UCI Online Shoppers Purchasing Intention")
+st.sidebar.write("Target: Revenue (1 = Purchase, 0 = No Purchase)")
 
 if os.path.exists("test_data.csv"):
-    with open("test_data.csv", "rb") as f:
-        st.sidebar.download_button(
-            "Download test_data.csv", f, file_name="test_data.csv", mime="text/csv"
-        )
+    with open("test_data.csv", "rb") as file:
+        st.sidebar.download_button("Download Test Data", file, file_name="test_data.csv")
 
-# ---------------- Main area ----------------
-uploaded = st.file_uploader(
-    f"Upload test CSV (all feature columns plus the '{TARGET}' column)", type="csv"
-)
+uploaded_file = st.file_uploader("Upload Test CSV File", type=["csv"])
 
-if uploaded is None:
-    st.info("Upload test_data.csv to see results. You can download it from the sidebar.")
-    st.stop()
+if uploaded_file is not None:
+    df = pd.read_csv(uploaded_file)
 
-df = pd.read_csv(uploaded)
+    if "Revenue" not in df.columns:
+        st.error("Revenue column is missing.")
+        st.stop()
 
-if TARGET not in df.columns:
-    st.error(f"The CSV is missing the '{TARGET}' column. Add it and upload again.")
-    st.stop()
+    y = df["Revenue"]
 
-model = load_model(MODEL_FILES[model_name])
+    if y.dtype == object:
+        y = y.astype(str).str.strip().str.lower().isin(["true", "1"]).astype(int)
+    else:
+        y = y.astype(int)
 
-# Check the uploaded file has every column the model was trained on
-expected_cols = list(getattr(model, "feature_names_in_", []))
-missing = [c for c in expected_cols if c not in df.columns]
-if missing:
-    st.error("These feature columns are missing from the CSV: " + ", ".join(missing))
-    st.stop()
+    model = load_model(models[selected_model])
+    features = list(model.feature_names_in_)
+    missing_columns = [col for col in features if col not in df.columns]
 
-X = df[expected_cols] if expected_cols else df.drop(columns=[TARGET])
-y = to_binary(df[TARGET])
+    if missing_columns:
+        st.error("Missing columns: " + ", ".join(missing_columns))
+        st.stop()
 
-st.caption(f"Loaded {len(df):,} rows. Purchases in this file: {y.mean():.1%}")
+    X = df[features]
 
-# ---- Selected model ----
-st.subheader(f"Results: {model_name}")
-scores, y_pred = compute_metrics(model, X, y)
+    st.write(f"Total Sessions: {len(df)}")
+    st.write(f"Purchase Sessions: {y.sum()}")
 
-cols = st.columns(6)
-for col, (name, value) in zip(cols, scores.items()):
-    col.metric(name, f"{value:.3f}")
+    st.subheader(f"Results: {selected_model}")
+    scores, predictions = evaluate_model(model, X, y)
 
-left, right = st.columns(2)
+    cols = st.columns(6)
+    for col, (metric, value) in zip(cols, scores.items()):
+        col.metric(metric, round(value, 3))
 
-with left:
-    st.subheader("Confusion Matrix")
-    fig, ax = plt.subplots(figsize=(4, 3))
-    sns.heatmap(
-        confusion_matrix(y, y_pred), annot=True, fmt="d", cmap="Blues", cbar=False,
-        xticklabels=["No purchase", "Purchase"], yticklabels=["No purchase", "Purchase"],
-        ax=ax,
-    )
-    ax.set_xlabel("Predicted")
-    ax.set_ylabel("Actual")
-    st.pyplot(fig)
+    col1, col2 = st.columns(2)
 
-with right:
-    st.subheader("Classification Report")
-    report = classification_report(
-        y, y_pred, target_names=["No purchase", "Purchase"], output_dict=True
-    )
-    st.dataframe(pd.DataFrame(report).T.round(3))
+    with col1:
+        st.subheader("Confusion Matrix")
+        cm = confusion_matrix(y, predictions)
+        fig, ax = plt.subplots(figsize=(5, 3))
+        sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=["No Purchase", "Purchase"], yticklabels=["No Purchase", "Purchase"], ax=ax)
+        ax.set_xlabel("Predicted")
+        ax.set_ylabel("Actual")
+        st.pyplot(fig)
+        plt.close(fig)
 
-# ---- All models ----
-st.markdown("---")
-st.subheader("Compare all five models on this file")
+    with col2:
+        st.subheader("Classification Report")
+        report = classification_report(y, predictions, target_names=["No Purchase", "Purchase"], output_dict=True, zero_division=0)
+        st.dataframe(pd.DataFrame(report).T.round(3))
 
-rows = {}
-for name, path in MODEL_FILES.items():
-    m = load_model(path)
-    rows[name], _ = compute_metrics(m, X, y)
+    st.markdown("---")
+    st.subheader("Model Comparison")
+    comparison = {}
 
-comparison = pd.DataFrame(rows).T.round(3)
-st.dataframe(comparison.style.highlight_max(axis=0, color="#cfe8ff"))
+    for name, path in models.items():
+        ml_model = load_model(path)
+        results, _ = evaluate_model(ml_model, X, y)
+        comparison[name] = results
 
-metric_to_plot = st.selectbox("Metric to chart", list(comparison.columns), index=5)
-st.bar_chart(comparison[metric_to_plot])
+    comparison_df = pd.DataFrame(comparison).T.round(3)
+    st.dataframe(comparison_df.style.highlight_max(axis=0, color="#cfe8ff"))
+
+    selected_metric = st.selectbox("Select Metric", comparison_df.columns, index=5)
+    st.bar_chart(comparison_df[selected_metric])
+
+else:
+    st.info("Please upload your test_data.csv file to view the results.")
