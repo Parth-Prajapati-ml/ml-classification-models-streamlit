@@ -1,6 +1,6 @@
 # Online Shopper Purchase Prediction
 
-### a. Problem Statement
+## a. Problem Statement
 Many people visit online shopping websites, browse different products, and leave without making a purchase. If we can predict whether a visitor is likely to buy something based on their browsing activity, businesses can take steps to encourage them to complete the purchase. For example, they can offer discounts, provide customer support through live chat, or show targeted advertisements.
 
 The main objective of this project is to predict whether a customer will make a purchase during an online shopping session. The prediction is based on details such as pages visited, time spent on the website, Google Analytics metrics, and visitor information.
@@ -60,11 +60,11 @@ Precision, Recall, F1 and MCC refer to the positive class (purchase).
 
 Logistic Regression - 
 
-Logistic Regression achieved good accuracy (0.8894) and the highest precision (0.7857). This means that when the model predicts a customer   will make a purchase, it is usually correct. However, its recall is only 0.4031, meaning it misses many actual buyers. This could be because the model struggles to identify complex patterns in the data.
+Logistic Regression achieved accuracy (0.8894) and the precision (0.7857). This means that when the model predicts a customer will make a purchase, it is usually correct. However, its recall is only 0.4031, meaning it misses many actual buyers. This could be because the model struggles to identify complex patterns in the data.
 
 Decision Tree- 
 
-Decision Tree performed better than the other models overall. It achieved the highest recall (0.5209), F1-score (0.6209) and MCC (0.5802), with a good precision of 0.7683. It can identify patterns based on conditions and values, which works well for features like PageValues and ExitRates. Limiting the tree depth to 6 also helped control overfitting.
+Decision Tree performed better than the other models overall. It achieved the recall (0.5209), F1-score (0.6209) and MCC (0.5802), with a good precision of 0.7683. It can identify patterns based on conditions and values, which works well for features like PageValues and ExitRates. Limiting the tree depth to 5 also helped control overfitting.
 
 KNN- 
 
@@ -80,8 +80,7 @@ SVM delivered the second-best performance after Decision Tree, with an F1-score 
 
 Overall Winner – Decision Tree- 
 
-Based on the results, Decision Tree is the best-performing model for this dataset. Although Logistic Regression has slightly better accuracy, accuracy alone is not a reliable measure here because only around 15% of customers actually made a purchase. Decision Tree provides a better balance between identifying actual buyers and avoiding incorrect predictions. Therefore, considering F1-score, recall and MCC, Decision Tree is the most suitable model among the five.
-
+Based on the results, Decision Tree is the best-performing model for this dataset.Decision Tree provides a better balance between identifying actual buyers and avoiding incorrect predictions. Therefore, considering F1-score, recall and MCC, Decision Tree is the most suitable model among the five.
 
 
 ## Repository Structure
