@@ -37,7 +37,7 @@ In this project, five different machine learning classification models are train
 ## d. Models Used
 
 1. Logistic Regression (`max_iter=1000`)
-2. Decision Tree Classifier (`max_depth=6`)
+2. Decision Tree Classifier (`max_depth=5`)
 3. K-Nearest Neighbors (`n_neighbors=7`)
 4. Gaussian Naive Bayes
 5. Support Vector Machine (RBF kernel, `probability=True`)
@@ -48,11 +48,11 @@ All models were trained on the same training set and evaluated on the same 2,441
 
 | ML Model Name | Accuracy | AUC | Precision | Recall | F1 | MCC |
 |---|---|---|---|---|---|---|
-| Logistic Regression | 0.887 | 0.900 | 0.752 | 0.414 | 0.534 | 0.503 |
-| Decision Tree | 0.900 | 0.916 | 0.709 | 0.607 | 0.654 | 0.599 |
-| KNN | 0.876 | 0.822 | 0.687 | 0.385 | 0.493 | 0.453 |
-| Naive Bayes | 0.277 | 0.750 | 0.176 | 0.979 | 0.298 | 0.138 |
-| Support Vector Machine | 0.896 | 0.873 | 0.736 | 0.518 | 0.608 | 0.561 |
+| Logistic Regression | 0.8894 | 0.8843 | 0.7857 | 0.4031 | 0.5329 | 0.5117 |
+| Decision Tree | 0.9005 | 0.9077 | 0.7683 | 0.5209 | 0.6209 | 0.5802 |
+| KNN | 0.8771 | 0.8046 | 0.7030 | 0.3717 | 0.4863 | 0.4518 |
+| Naive Bayes | 0.2835 | 0.7705 | 0.1777 | 0.9869 | 0.3012 | 0.1506 |
+| Support Vector Machine | 0.8927 | 0.8656 | 0.7500 | 0.4712 | 0.5788 | 0.5394 |
 
 Precision, Recall, F1 and MCC refer to the positive class (purchase).
 
@@ -60,23 +60,23 @@ Precision, Recall, F1 and MCC refer to the positive class (purchase).
 
 Logistic Regression - 
 
-Logistic Regression achieved good accuracy (0.887) and the highest precision (0.752). This means that when the model predicts a customer   will make a purchase, it is usually correct. However, its recall is only 0.414, meaning it misses many actual buyers. This could be because the model struggles to identify complex patterns in the data.
+Logistic Regression achieved good accuracy (0.8894) and the highest precision (0.7857). This means that when the model predicts a customer   will make a purchase, it is usually correct. However, its recall is only 0.4031, meaning it misses many actual buyers. This could be because the model struggles to identify complex patterns in the data.
 
 Decision Tree- 
 
-Decision Tree performed better than the other models overall. It achieved the highest recall (0.607), F1-score (0.654) and MCC (0.599), with a good precision of 0.709. It can identify patterns based on conditions and values, which works well for features like PageValues and ExitRates. Limiting the tree depth to 6 also helped control overfitting.
+Decision Tree performed better than the other models overall. It achieved the highest recall (0.5209), F1-score (0.6209) and MCC (0.5802), with a good precision of 0.7683. It can identify patterns based on conditions and values, which works well for features like PageValues and ExitRates. Limiting the tree depth to 6 also helped control overfitting.
 
 KNN- 
 
-KNN showed comparatively weaker performance, with an F1-score of 0.493 and MCC of 0.453. One possible reason is that most customers in the dataset did not make a purchase. Since KNN makes predictions based on nearby data points, it often classifies potential buyers as non-buyers. The large number of encoded categorical columns may also affect its performance.
+KNN showed comparatively weaker performance, with an F1-score of 0.4863 and MCC of 0.4518. One possible reason is that most customers in the dataset did not make a purchase. Since KNN makes predictions based on nearby data points, it often classifies potential buyers as non-buyers. The large number of encoded categorical columns may also affect its performance.
 
 Naive Bayes- 
 
-Naive Bayes achieved very high recall (0.979), but its precision was very low (0.176). This means it identified almost all actual buyers but also incorrectly classified many non-buyers as buyers. Its overall accuracy was only 0.277. The model may not perform well because some features are highly skewed and several variables are related to each other, whereas Naive Bayes assumes that features are independent.
+Naive Bayes achieved very high recall (0.9869), but its precision was very low (0.1777). This means it identified almost all actual buyers but also incorrectly classified many non-buyers as buyers. Its overall accuracy was only 0.2835. The model may not perform well because some features are highly skewed and several variables are related to each other, whereas Naive Bayes assumes that features are independent.
 
 Support Vector Machine (SVM)- 
 
-SVM delivered the second-best performance after Decision Tree, with an F1-score of 0.608 and MCC of 0.561. Its precision was 0.736, while recall was 0.518. The RBF kernel helped the model capture non-linear patterns in the data, although it still missed some actual buyers.
+SVM delivered the second-best performance after Decision Tree, with an F1-score of 0.5788 and MCC of 0.5394. Its precision was 0.7500, while recall was 0.4712. The RBF kernel helped the model capture non-linear patterns in the data, although it still missed some actual buyers.
 
 Overall Winner – Decision Tree- 
 
